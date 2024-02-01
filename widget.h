@@ -2,6 +2,7 @@
 #define WIDGET_H
 
 #include <QWidget>
+#include <QTextEdit>
 
 class Widget : public QWidget
 {
@@ -10,5 +11,9 @@ class Widget : public QWidget
 public:
     Widget(QWidget *parent = nullptr);
     ~Widget();
+
+private:
+    QTextEdit *userInput;
+    QTextEdit *result;
 };
 #endif // WIDGET_H
