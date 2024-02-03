@@ -1,4 +1,5 @@
 #include "widget.h"
+#include "base64.h"
 
 #include <QLabel>
 #include <QFont>
@@ -37,14 +38,26 @@ Widget::Widget(QWidget *parent)
 
     userInput->setMinimumWidth(TEXT_EDIT_MINIMUM_WIDTH);
     userInput->setMinimumHeight(TEXT_EDIT_MINIMUM_HEIGHT);
+    userInput->setAcceptRichText(false);
+
     result->setMinimumWidth(TEXT_EDIT_MINIMUM_WIDTH);
     result->setMinimumHeight(TEXT_EDIT_MINIMUM_HEIGHT);
+    result->setAcceptRichText(false);
+    result->setReadOnly(true);
 
     mainLayout->addWidget(l0);
     mainLayout->addWidget(userInput);
     mainLayout->addWidget(l1);
     mainLayout->addWidget(result);
     mainLayout->addWidget(button);
+
+    connect(button, &QPushButton::clicked, this, &Widget::encode);
 }
 
 Widget::~Widget() {}
+
+void Widget::encode()
+{
+    QString text = userInput->toPlainText();
+    result->setPlainText(QString(Base64::encode(text.toUtf8())));
+}

@@ -12,6 +12,9 @@ public:
     Widget(QWidget *parent = nullptr);
     ~Widget();
 
+private slots:
+    void encode();
+
 private:
     QTextEdit *userInput;
     QTextEdit *result;
