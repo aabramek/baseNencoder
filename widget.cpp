@@ -1,5 +1,5 @@
 #include "widget.h"
-#include "base64.h"
+#include "baseN.h"
 
 #include <QLabel>
 #include <QFont>
@@ -59,5 +59,5 @@ Widget::~Widget() {}
 void Widget::encode()
 {
     QString text = userInput->toPlainText();
-    result->setPlainText(QString(Base64::encode(text.toUtf8())));
+    result->setPlainText(QString(BaseNEncoder::encode32(text.toUtf8())));
 }
