@@ -2,7 +2,11 @@
 #define WIDGET_H
 
 #include <QWidget>
-#include <QTextEdit>
+#include <QPlainTextEdit>
+#include <QComboBox>
+#include <QPushButton>
+#include <QLabel>
+#include <QLineEdit>
 
 class Widget : public QWidget
 {
@@ -14,9 +18,13 @@ public:
 
 private slots:
     void encode();
+    void selectFileName();
 
 private:
-    QTextEdit *userInput;
-    QTextEdit *result;
+    QPlainTextEdit *userInput;
+    QPlainTextEdit *result;
+    QComboBox *encodingType;
+    QPushButton *openFileDialog;
+    QLineEdit *fileName;
 };
 #endif // WIDGET_H
