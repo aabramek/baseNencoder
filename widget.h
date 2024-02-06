@@ -7,6 +7,7 @@
 #include <QPushButton>
 #include <QLabel>
 #include <QLineEdit>
+#include <QMessageBox>
 
 class Widget : public QWidget
 {
@@ -19,6 +20,7 @@ public:
 private slots:
     void encode();
     void selectFileName();
+    void saveResult();
 
 private:
     QPlainTextEdit *userInput;
@@ -26,5 +28,8 @@ private:
     QComboBox *encodingType;
     QPushButton *openFileDialog;
     QLineEdit *fileName;
+    QPushButton *saveResultButton;
+    QByteArray encodedData;
+    QMessageBox *saveResultFailureMB;
 };
 #endif // WIDGET_H

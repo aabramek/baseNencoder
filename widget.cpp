@@ -9,9 +9,11 @@
 #include <QFileDialog>
 #include <QFile>
 #include <QDataStream>
+#include <QGuiApplication>
 
 static constexpr int TEXT_EDIT_MINIMUM_WIDTH = 500;
 static constexpr int TEXT_EDIT_MINIMUM_HEIGHT = 150;
+static constexpr qsizetype ENCODED_DATA_SIZE_LIMIT = 250;
 
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
@@ -20,6 +22,8 @@ Widget::Widget(QWidget *parent)
     , encodingType(new QComboBox)
     , openFileDialog(new QPushButton("Choose file"))
     , fileName(new QLineEdit)
+    , saveResultButton(new QPushButton("Save result to file"))
+    , saveResultFailureMB(new QMessageBox(QMessageBox::Critical, "Error", "Failed to open the file"))
 {
     setWindowTitle("Base64 Encoder");
 
@@ -69,21 +73,26 @@ Widget::Widget(QWidget *parent)
     form->addRow("Filename", fileNameLayout);
     form->addRow("Encoding type", encodingType);
 
+    saveResultButton->setDisabled(true);
+
     mainLayout->addWidget(l0);
     mainLayout->addWidget(userInput);
     mainLayout->addWidget(l1);
     mainLayout->addWidget(result);
     mainLayout->addLayout(form);
+    mainLayout->addWidget(saveResultButton);
     mainLayout->addWidget(button);
 
     connect(openFileDialog, &QPushButton::clicked, this, &Widget::selectFileName);
     connect(button, &QPushButton::clicked, this, &Widget::encode);
+    connect(saveResultButton, &QPushButton::clicked, this, &Widget::saveResult);
 }
 
 Widget::~Widget() {}
 
 void Widget::encode()
 {
+    QGuiApplication::setOverrideCursor(QCursor(Qt::CursorShape::WaitCursor));
     QByteArray data;
     QFile file(fileName->text());
     if (file.exists() && file.open(QIODevice::ReadOnly)) {
@@ -93,20 +102,49 @@ void Widget::encode()
     else {
         data = userInput->toPlainText().toUtf8();
     }
-    QString encoded;
     switch (encodingType->currentIndex()) {
     case 0:
-        encoded = BaseNEncoder::encode64(data);
+        encodedData = BaseNEncoder::encode64(data);
         break;
     case 1:
-        encoded = BaseNEncoder::encode32(data);
+        encodedData = BaseNEncoder::encode32(data);
         break;
     }
-    result->setPlainText(encoded);
+    if (encodedData.size() < ENCODED_DATA_SIZE_LIMIT) {
+        result->setPlainText(encodedData);
+    }
+    else {
+        result->setPlaceholderText("Data is too long to be displayed here, save encoded result to a file");
+        result->setPlainText("");
+    }
+    saveResultButton->setEnabled(true);
+    QGuiApplication::restoreOverrideCursor();
 }
 
 void Widget::selectFileName()
 {
     QString selectedFileName = QFileDialog::getOpenFileName(this, "Choose file");
     fileName->setText(selectedFileName);
+}
+
+void Widget::saveResult()
+{
+    QString selectedFileName;
+    if (fileName->text().isEmpty()) {
+        selectedFileName = QFileDialog::getSaveFileName(this, "Choose file");
+    }
+    else {
+        selectedFileName = fileName->text();
+    }
+
+    if (selectedFileName.isEmpty()) {
+        return;
+    }
+    QFile file(selectedFileName);
+    if (!file.open(QIODevice::WriteOnly)) {
+        saveResultFailureMB->exec();
+    }
+    file.write(encodedData);
+    file.close();
+    encodedData.clear();
 }
