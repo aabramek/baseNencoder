@@ -133,21 +133,18 @@ void Widget::selectFileName()
 
 void Widget::saveResult()
 {
-    QString selectedFileName;
-    if (fileName->text().isEmpty()) {
-        selectedFileName = QFileDialog::getSaveFileName(this, "Choose file");
-    }
-    else {
-        selectedFileName = fileName->text();
-    }
+    QString selectedFileName = QFileDialog::getSaveFileName(this, "Choose file");
 
     if (selectedFileName.isEmpty()) {
         return;
     }
+
     QFile file(selectedFileName);
+
     if (!file.open(QIODevice::WriteOnly)) {
         saveResultFailureMB->exec();
     }
+
     file.write(encodedData);
     file.close();
     encodedData.clear();
