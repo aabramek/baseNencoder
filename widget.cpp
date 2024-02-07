@@ -54,9 +54,10 @@ Widget::Widget(QWidget *parent)
     result->setMinimumHeight(TEXT_EDIT_MINIMUM_HEIGHT);
     result->setReadOnly(true);
 
-    std::array<const char*, 2> encodingTypes = {
+    std::array<const char*, 3> encodingTypes = {
         "Base64",
-        "Base32"
+        "Base32",
+        "Base16"
     };
 
     std::for_each(encodingTypes.begin(), encodingTypes.end(), [this](const char *s){
@@ -108,6 +109,9 @@ void Widget::encode()
         break;
     case 1:
         encodedData = BaseNEncoder::encode32(data);
+        break;
+    case 2:
+        encodedData = BaseNEncoder::encode16(data);
         break;
     }
     if (encodedData.size() < ENCODED_DATA_SIZE_LIMIT) {

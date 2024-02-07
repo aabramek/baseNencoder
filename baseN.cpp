@@ -131,3 +131,15 @@ QByteArray BaseNEncoder::encode32(const QByteArray &data)
 
     return result;
 }
+
+QByteArray BaseNEncoder::encode16(const QByteArray &data)
+{
+    QByteArray result;
+    result.reserve(data.length() * 2);
+    for (char byte : data) {
+        unsigned char b = static_cast<unsigned char>(byte);
+        result.push_back(base16alphabet[b >> 4]);
+        result.push_back(base16alphabet[b & 0x0F]);
+    }
+    return result;
+}
