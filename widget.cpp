@@ -38,10 +38,16 @@ Widget::Widget(QWidget *parent)
     l0->setFont(labelFont);
 
     QLabel *l1 = new QLabel;
-    l1->setText("Result");
+    l1->setText("Or choose input file");
     l1->setAlignment(Qt::AlignLeft);
     l1->setMargin(5);
     l1->setFont(labelFont);
+
+    QLabel *l2 = new QLabel;
+    l2->setText("Result");
+    l2->setAlignment(Qt::AlignLeft);
+    l2->setMargin(5);
+    l2->setFont(labelFont);
 
     QPushButton *button = new QPushButton;
     button->setText("Encode");
@@ -79,10 +85,11 @@ Widget::Widget(QWidget *parent)
     mainLayout->addWidget(l0);
     mainLayout->addWidget(userInput);
     mainLayout->addWidget(l1);
-    mainLayout->addWidget(result);
     mainLayout->addLayout(form);
-    mainLayout->addWidget(saveResultButton);
+    mainLayout->addWidget(l2);
+    mainLayout->addWidget(result);
     mainLayout->addWidget(button);
+    mainLayout->addWidget(saveResultButton);
 
     connect(openFileDialog, &QPushButton::clicked, this, &Widget::selectFileName);
     connect(button, &QPushButton::clicked, this, &Widget::encode);
